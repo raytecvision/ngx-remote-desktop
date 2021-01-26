@@ -27,7 +27,7 @@ I am using @ILLGrenoble/guacamole-common-js TypeScript definitions but I really 
 
 ## What I plan to do
 
-- Make sure the JS API doesn't use any outdated components
+- Make sure the JS API doesn't use any outdated component
 - Understand a little bit more how all the moving parts of Guacamole fit together
 - Expand the exposed API, I'd really like to have support for file management and drag-n-drop.
 - Complete the demo project
