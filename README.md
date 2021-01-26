@@ -16,10 +16,12 @@ I am using @ILLGrenoble/guacamole-common-js TypeScript definitions but I really 
 - I replaced deprecated components with newer ones
 - I made AoT compiler happy by setting some HTML-exposed properties public
 - RemoteDesktopService should work (I renamed it from RemoteDesktopManager, if that's confusing I can bring it back to the old name)
+- Clipboard
 
 ## What doesn't
 
 - Fullscreen
+- Screenshot
 - CSS in demo project is utterly broken
 - ... probably something else
 
