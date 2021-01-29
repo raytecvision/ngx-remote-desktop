@@ -1,20 +1,20 @@
-<div class="container">
+<div class="vdi-container">
   <ngx-remote-desktop [manager]="manager">
     <!-- Toolbar items -->
     <ngx-remote-desktop-toolbar-item align="left" *ngIf="manager.isConnected()" (click)="handleScreenshot()">
-      <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon>Take screenshot
+      Take screenshot
     </ngx-remote-desktop-toolbar-item>
     <ngx-remote-desktop-toolbar-item align="left" *ngIf="manager.isConnected()" (click)="handleClipboard()" >
-        <i class="fa fa-clipboard"> </i> Clipboard
+      Clipboard
     </ngx-remote-desktop-toolbar-item>
     <ngx-remote-desktop-toolbar-item *ngIf="manager.isConnected()" (click)="handleDisconnect()" align="right">
-      <i class="fa fa-sign-out"> </i> Disconnect
+      Disconnect
     </ngx-remote-desktop-toolbar-item>
     <ngx-remote-desktop-toolbar-item (click)="handleEnterFullScreen()" *ngIf="!manager.isFullScreen() && manager.isConnected()" align="right">
-        <i class="fa fa-arrows-alt" aria-hidden="true"></i> Enter full screen
+      Enter full screen
     </ngx-remote-desktop-toolbar-item>
     <ngx-remote-desktop-toolbar-item (click)="handleExitFullScreen()" *ngIf="manager.isFullScreen() && manager.isConnected()" align="right">
-        Exit full screen
+      Exit full screen
     </ngx-remote-desktop-toolbar-item>
 
     <!-- Override connection state messages -->

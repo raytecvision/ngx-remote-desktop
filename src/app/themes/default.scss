@@ -82,11 +82,11 @@ $ngx-remote-desktop-status-bar-border-color: #131418;
             margin-bottom: 0;
             list-style: none;
             .ngx-remote-desktop-toolbar-item {
-                // line-height: 18px;
+                line-height: 0px;
                 text-align: center;
                 text-decoration: none;
                 user-select: none;
-                // padding: 0.5em 0.5em;
+                padding: 0.5em 0.5em;
                 color: $ngx-remote-desktop-toolbar-item-color;
                 font-weight: 400;
                 &:hover {

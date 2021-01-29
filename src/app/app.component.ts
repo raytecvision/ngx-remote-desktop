@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { WebSocketTunnel } from '@illgrenoble/guacamole-common-js';
+import * as FileSaver from 'file-saver';
 
 import { RemoteDesktopService } from 'remote-desktop';
 import {MatDialog} from '@angular/material/dialog';
@@ -9,21 +10,18 @@ import { ClipboardModalComponent } from './components/clipboard-modal.component'
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./themes/default.scss','./app.component.scss'],
+    styleUrls: ['./themes/default.scss', './app.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
-    manager: RemoteDesktopService;
+    public manager: RemoteDesktopService;
 
-    constructor(private snackBar: MatSnackBar, public dialog: MatDialog) {
-
-    }
+    constructor(private snackBar: MatSnackBar, public dialog: MatDialog) {}
 
     handleScreenshot(): void {
         this.manager.createScreenshot(blob => {
             if (blob) {
-              console.log('Not implemented');
-                //FileSaver.saveAs(blob, `screenshot.png`);
+                FileSaver.saveAs(blob, `screenshot.png`);
             }
         });
     }
@@ -36,15 +34,6 @@ export class AppComponent implements OnInit {
             data: { manager: this.manager, text: ""}
           });
           return dialogRef.afterClosed();
-        // this.manager.setFocused(false);
-        // const modal = this.ngbModal.open(classRef, {
-        //     size: 'lg',
-        //     windowClass: 'modal-xxl',
-        //     container: '.ngx-remote-desktop',
-        //     keyboard: false
-        // });
-        // modal.componentInstance.manager = this.manager;
-        // return modal;
     }
 
     handleDisconnect(): void {
@@ -74,13 +63,13 @@ export class AppComponent implements OnInit {
 
     handleConnect() {
         const parameters = {
-          scheme: 'telnet',
-          hostname: 'towel.blinkenlights.nl',
-          image: 'image/png',
-          audio: 'audio/L16',
-          dpi: 96,
-          width: window.screen.width,
-          height: window.screen.height
+            scheme: 'telnet',
+            hostname: 'towel.blinkenlights.nl',
+            image: 'image/png',
+            audio: 'audio/L16',
+            dpi: 96,
+            width: window.screen.width,
+            height: window.screen.height
         };
         /*
          * The manager will establish a connection to: 
@@ -105,7 +94,6 @@ export class AppComponent implements OnInit {
             snackbar.onAction().subscribe(() => this.handleClipboard());
         });
         this.manager.onReconnect.subscribe(reconnect => this.handleConnect());
-
     }
 
 }
