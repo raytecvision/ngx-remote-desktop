@@ -1,6 +1,6 @@
 {
-  "name": "remote-desktop",
-  "version": "0.0.1",
+  "name": "ngx-remote-desktop",
+  "version": "2.0.0-alpha.1",
   "peerDependencies": {
     "@angular/common": "^11.1.0",
     "@angular/core": "^11.1.0",
