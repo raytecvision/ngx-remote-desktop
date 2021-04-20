@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/remote-desktop",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "screenfull": "screenfull",
+      "@illgrenoble/guacamole-common-js": "illgrenoble.guacamole-common-js",
+      "@illgrenoble/guacamole-common-js/guacamole": "illgrenoble.guacamole-common-js.guacamole"
+    }
+  }
+}

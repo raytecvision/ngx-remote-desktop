@@ -1,0 +1,24 @@
+{
+  "name": "@kriive/ngx-remote-desktop",
+  "description": "ngx-remote-desktop is an Angular11 module for connecting to a remote desktop using the guacamole protocol",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kriive/ngx-remote-desktop.git"
+  },
+  "author": "Manuel Romei <manuel.romei@outlook.it>",
+  "bugs": {
+    "url": "https://github.com/kriive/ngx-remote-desktop"
+  },
+  "homepage": "https://github.com/kriive/ngx-remote-desktop#readme",
+  "version": "2.0.0-alpha.2",
+  "peerDependencies": {
+    "@angular/common": "^11.1.0",
+    "@angular/core": "^11.1.0",
+    "screenfull": "^5.1.0",
+    "@illgrenoble/guacamole-common-js": "0.0.1"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}
