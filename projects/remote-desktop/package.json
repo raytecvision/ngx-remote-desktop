@@ -20,8 +20,5 @@
   },
   "dependencies": {
     "tslib": "^2.0.0"
-  },
-  "scripts": {
-    "packagelib": "ng build remote-desktop --configuration production"
   }
 }
