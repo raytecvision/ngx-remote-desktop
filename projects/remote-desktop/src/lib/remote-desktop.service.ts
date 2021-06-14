@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { Client, StringReader, Tunnel } from '@illgrenoble/guacamole-common-js';
+import { Client, StringReader, Tunnel } from '@illgrenoble/visa-guacamole-common-js';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 
 /**
