@@ -5,8 +5,8 @@
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
       "screenfull": "screenfull",
-      "@illgrenoble/guacamole-common-js": "illgrenoble.guacamole-common-js",
-      "@illgrenoble/guacamole-common-js/guacamole": "illgrenoble.guacamole-common-js.guacamole"
+      "@illgrenoble/visa-guacamole-common-js": "illgrenoble.guacamole-common-js",
+      "@illgrenoble/visa-guacamole-common-js/guacamole": "illgrenoble.guacamole-common-js.guacamole"
     }
   }
 }
