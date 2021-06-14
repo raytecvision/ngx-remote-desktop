@@ -50,6 +50,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
    * Remote desktop mouse
    */
   private mouse: Mouse;
+  private touch: Mouse.Touchscreen;
 
   /**
    * Subscriptions
@@ -189,6 +190,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
    */
   private bindDisplayInputListeners(): void {
       this.removeDisplayInputListeners();
+      this.touch.onmousedown = this.touch.onmousemove = this.touch.onmouseup =
       this.mouse.onmousedown = this.mouse.onmouseup = this.mouse.onmousemove = this.handleMouseState.bind(this);
       this.keyboard.onkeyup = this.handleKeyUp.bind(this);
       this.keyboard.onkeydown = this.handleKeyDown.bind(this);
@@ -205,6 +207,9 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.mouse) {
           this.mouse.onmousedown = this.mouse.onmouseup = this.mouse.onmousemove = null;
       }
+      if (this.touch) {
+          this.touch.onmousedown = this.touch.onmouseup = this.touch.onmousemove = null;
+      }
   }
 
   /**
@@ -213,6 +218,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
   private createDisplayInputs(): void {
       const display = this.display.nativeElement.children[0];
       this.mouse = new Mouse(display);
+      this.touch = new Mouse.Touchscreen(display);
       this.keyboard = new Keyboard(window.document);
   }
 
