@@ -11,7 +11,7 @@ import {
   ViewChild,
   AfterViewChecked,
 } from '@angular/core';
-import { Client, Display, Keyboard, Mouse } from '@illgrenoble/visa-guacamole-common-js';
+import { Client, Display, Keyboard, Mouse } from '@raytecvision/guacamole-common-js';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { RemoteDesktopService } from '../remote-desktop.service';
 
