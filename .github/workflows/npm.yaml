@@ -15,6 +15,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm run packagelib
-      - run: cd projects/remote-desktop && npm publish
+      - run: cd dist/remote-desktop && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
