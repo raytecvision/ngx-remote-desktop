@@ -7,6 +7,13 @@ The work on this repo is highly experimental, and I have no prior experience on 
 
 We are using @ILLGrenoble/guacamole-common-js TypeScript definitions but we don't know how much outdated they are, mayba a TypeScript definition package will be available.
 
+## Develop
+ - `npm i`
+ - Build the remote-desktop project with `ng build remote-desktop`
+ - Build the project with `ng serve --open`
+ - You need a guacd + backend to test this project. I suggest [this one](https://github.com/wwt/guac).
+ - You may need to use a proxy-config in Angular, in case your browser complains about CORS.
+
 ## What works so far
 
 - We brought the repo to Angular 11
