@@ -20,27 +20,24 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatInputModule} from '@angular/material/input';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ClipboardModalComponent,
-    FileSizePipe
-  ],
-  imports: [
-    BrowserModule,
-    RemoteDesktopModule,
-    MatSnackBarModule,
-    MatIconModule,
-    MatDialogModule,
-    FormsModule,
-    MatInputModule,
-    MatButtonModule,
-    BrowserAnimationsModule
-  ],
-  providers: [{provide: OverlayContainer, useClass: FullscreenOverlayContainer},
-  ],
-  entryComponents: [
-    ClipboardModalComponent
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        ClipboardModalComponent,
+        FileSizePipe
+    ],
+    imports: [
+        BrowserModule,
+        RemoteDesktopModule,
+        MatSnackBarModule,
+        MatIconModule,
+        MatDialogModule,
+        FormsModule,
+        MatInputModule,
+        MatButtonModule,
+        BrowserAnimationsModule
+    ],
+    providers: [{ provide: OverlayContainer, useClass: FullscreenOverlayContainer },
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
