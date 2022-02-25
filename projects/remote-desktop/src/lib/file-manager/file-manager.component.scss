@@ -1,0 +1,100 @@
+.file-manager-container {
+  display: grid;
+  grid-template-rows: 0 1fr;
+  height: 100%;
+  background: white;
+
+  .select-filesystem {
+  }
+
+  .current-filesystem {
+    display: grid;
+    grid-template-rows: 30px 1fr 35px;
+    padding: 1rem;
+    overflow: hidden;
+    //height: 500px;
+
+    > .cwd {
+      display: flex;
+
+      .refresh-button {
+        margin-right: 0.8rem;
+        padding: 0;
+      }
+
+      .up-button {
+        padding-left: 0;
+      }
+    }
+
+
+    > .files-list-container {
+      overflow: scroll;
+      height: 100%;
+      padding-left: .6rem;
+
+      table {
+        width: 100%;
+        border-spacing: 0 3px;
+
+        td.node {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 1px;
+
+          > div > span {
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+
+        td.actions {
+          width: 50px;
+
+          button {
+            width: 29px;
+            i {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+
+    > .actions {
+      display: flex;
+      align-items: end;
+    }
+  }
+}
+
+
+i.fm-icon > svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.fs-element {
+  display: flex;
+
+  i {
+    margin-right: .4rem;
+  }
+
+  span {
+    margin-bottom: 4px;
+  }
+}
+
+.fs-element.directory {
+  cursor: pointer;
+
+  &:hover {
+    color: #00467e
+  }
+
+  &:active {
+    color: #012441;
+  }
+}

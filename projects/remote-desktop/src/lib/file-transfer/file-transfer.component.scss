@@ -1,0 +1,109 @@
+
+.transfer {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+
+  .transfer-status {
+    width: 70%;
+    padding: 0.25em;
+    position: relative;
+  }
+
+  .text {
+    text-align: right;
+    padding: 0.25em
+  }
+
+  .filename {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 0.125em;
+
+    .progress {
+      width: 100%;
+      padding: 0.25em;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      opacity: 0.25;
+
+      .bar {
+        display: none;
+        background: #A3D655;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0;
+      }
+    }
+
+    > span {
+      padding-left: 0.3rem;
+      padding-right: 0.3rem;
+    }
+  }
+
+  &.in-progress .progress {
+    background-color: #EEE;
+    background-image: url('images/progress.svg');
+
+    background-size: 16px 16px;
+
+    animation-name: transfer-progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    .bar {
+      display: initial;
+    }
+  }
+
+  &.error {
+    background: #FDD;
+
+    .text,
+    .progress .bar {
+      display: none;
+    }
+
+    .error-text {
+      display: block;
+      margin: 0;
+      margin-top: 0.5em;
+      width: 100%;
+    }
+  }
+
+  .error-text {
+    display: none;
+  }
+}
+
+@keyframes transfer-progress {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 64px 0px;
+  }
+}
+
+@-webkit-keyframes transfer-progress {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 64px 0px;
+  }
+}
+

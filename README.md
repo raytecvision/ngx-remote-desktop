@@ -9,10 +9,14 @@ We are using @ILLGrenoble/guacamole-common-js TypeScript definitions but we don'
 
 ## Develop
  - `npm i`
- - Build the remote-desktop project with `ng build remote-desktop`
+ - Build the remote-desktop project with `ng build remote-desktop --watch`
  - Build the project with `ng serve --open`
  - You need a guacd + backend to test this project. I suggest [this one](https://github.com/wwt/guac).
  - You may need to use a proxy-config in Angular, in case your browser complains about CORS.
+
+Caveats:
+
+- Uploads require the app to be hosted as the same domain as the API, otherwise CORS will fail. To fix it temporarily in the dev environment, configure a chrome instance with `--disable-web-security` as arguments in the WebStorm browser list.
 
 ## What works so far
 

@@ -1,0 +1,23 @@
+<div class="transfer"
+     [class.in-progress]="isInProgress()"
+     [class.error]="hasError()">
+
+  <!-- Overall status of transfer -->
+  <div class="transfer-status">
+
+    <!-- Filename and progress bar -->
+    <div class="filename">
+      <div class="progress">
+        <div [style]="{'width': getPercentDone() + '%'}" class="bar"></div>
+      </div>
+      <span>{{transfer.filename}}</span>
+    </div>
+
+    <!-- Error text -->
+    <p class="error-text">{{getErrorText()}}</p>
+
+  </div>
+
+  <!-- Progress/status text -->
+  <div class="text">{{getProgressValue()}} {{getProgressUnit()}}</div>
+</div>

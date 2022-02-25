@@ -1,0 +1,67 @@
+:host {
+  max-height: inherit;
+}
+
+.transfer-manager {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  align-items: stretch;
+
+  max-width: inherit;
+  max-height: inherit;
+
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+
+  background: white;
+
+  .header {
+    margin: 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    h2 {
+      font-size: 1.3em;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  h3 {
+    margin: 0.25em;
+    font-size: 1em;
+    margin-bottom: 0;
+    opacity: 0.5;
+    text-align: center;
+  }
+
+  .transfers {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .transfer-manager-body {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
+}
+
+
+/*
+ * If viewport is too small for even the 1.5in dialog, fit all available space.
+ */
+@media all and (max-height: 150px) {
+  .transfer-manager {
+    position: absolute;
+    left: 0.5em;
+    top: 0.5em;
+    right: 0.5em;
+    bottom: 0.5em;
+  }
+
+}

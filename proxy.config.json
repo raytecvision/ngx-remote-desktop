@@ -1,0 +1,11 @@
+{
+  "/be": {
+    "target": "https://localhost:8443",
+    "secure": false,
+    "ws": true,
+    "pathRewrite": {
+      "^/be": ""
+    },
+    "logLevel": "debug"
+  }
+}

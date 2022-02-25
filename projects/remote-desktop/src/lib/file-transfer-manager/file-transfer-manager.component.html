@@ -1,0 +1,21 @@
+<div class="transfer-manager">
+
+  <!-- File transfer manager header -->
+  <div class="header">
+    <h2>Uploads</h2>
+    <button class="ngx-remote-desktop-button" (click)="remoteDesktopService.clearCompletedUploads()">Clear Completed</button>
+  </div>
+
+  <!-- Sent/received files -->
+  <div class="transfer-manager-body" *ngIf="hasTransfers()">
+    <div class="transfer-manager-body-section">
+      <div class="transfers">
+        <ngx-file-transfer
+          *ngFor="let upload of remoteDesktopService.getUploads()"
+          [transfer]="upload"
+        >
+        </ngx-file-transfer>
+      </div>
+    </div>
+  </div>
+</div>

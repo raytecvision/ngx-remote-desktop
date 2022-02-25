@@ -1,19 +1,38 @@
+<div id="g_id_onload"
+     data-client_id="760726185740-3f2s02ve1k96pikiis7bvtbak9lpva1t.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-login_uri="http://localhost:4200"
+     data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="signin_with"
+     data-size="large"
+     data-logo_alignment="left">
+</div>
 <div class="vdi-container">
-  <ngx-remote-desktop [manager]="manager">
+<ngx-remote-desktop [showFileManager]="fileManagerVisible">
     <!-- Toolbar items -->
-    <ngx-remote-desktop-toolbar-item align="left" *ngIf="manager.isConnected()" (click)="handleScreenshot()">
+    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleTakeScreenshot()" align="left" >
       Take screenshot
     </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item align="left" *ngIf="manager.isConnected()" (click)="handleClipboard()" >
+    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleClipboard()" align="left" >
       Clipboard
     </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="manager.isConnected()" (click)="handleDisconnect()" align="right">
+    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="toggleFileManager()" align="left" >
+      File Manager
+    </ngx-remote-desktop-toolbar-item>
+    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleDisconnect()" align="right">
       Disconnect
     </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item (click)="handleEnterFullScreen()" *ngIf="!manager.isFullScreen() && manager.isConnected()" align="right">
+    <ngx-remote-desktop-toolbar-item *ngIf="!remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleEnterFullScreen()" align="right">
       Enter full screen
     </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item (click)="handleExitFullScreen()" *ngIf="manager.isFullScreen() && manager.isConnected()" align="right">
+    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleExitFullScreen()" align="right">
       Exit full screen
     </ngx-remote-desktop-toolbar-item>
 
@@ -28,7 +47,7 @@
     </ngx-remote-desktop-connecting-message>
 
     <!-- Status bar -->
-    <ngx-remote-desktop-status-bar *ngIf="manager.isConnected()">
+    <ngx-remote-desktop-status-bar *ngIf="remoteDesktopService.isConnected()">
       <ngx-remote-desktop-status-bar-item>
           You are currently connected to: <strong>Machine 1</strong>
       </ngx-remote-desktop-status-bar-item>
@@ -36,6 +55,10 @@
           <span>Need help? Look at our <a href="#">documentation</a></span>
       </ngx-remote-desktop-status-bar-item>
     </ngx-remote-desktop-status-bar>
-    
+
+    <!-- File Manager -->
+    <ngx-remote-desktop-file-manager *ngIf="remoteDesktopService.isConnected()">
+    </ngx-remote-desktop-file-manager>
   </ngx-remote-desktop>
 </div>
+

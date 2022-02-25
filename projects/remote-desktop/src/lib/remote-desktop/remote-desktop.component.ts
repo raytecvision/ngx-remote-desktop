@@ -1,30 +1,27 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import {animate, state, style, transition, trigger,} from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   Component,
   ContentChild,
   ElementRef,
+  HostBinding,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
-  HostListener,
-  Output,
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import {BehaviorSubject, Subscription, timer} from 'rxjs';
 import * as screenfull from 'screenfull';
 
-import { RemoteDesktopService } from '../remote-desktop.service';
-import { ConnectingMessageComponent } from '../messages/connecting-message.component';
-import { DisconnectedMessageComponent } from '../messages/disconnected-message.component';
-import { ErrorMessageComponent } from '../messages/error-message.component';
+import {RemoteDesktopService} from '../remote-desktop.service';
+import {ConnectingMessageComponent} from '../messages/connecting-message.component';
+import {DisconnectedMessageComponent} from '../messages/disconnected-message.component';
+import {ErrorMessageComponent} from '../messages/error-message.component';
+import {FileManagerComponent} from '../file-manager/file-manager.component';
+import {finalize, takeWhile} from 'rxjs/operators';
+import {ManagedFilesystemService} from '../managed-filesystem.service';
 
 /**
  * The main component for displaying a remote desktop
@@ -46,22 +43,22 @@ import { ErrorMessageComponent } from '../messages/error-message.component';
           ></ng-content>
         </ul>
       </ng-template>
-      <!-- End toolbar items template -->
+
       <!-- Normal toolbar -->
-      <nav class="ngx-remote-desktop-toolbar" *ngIf="!manager.isFullScreen()">
+      <nav class="ngx-remote-desktop-toolbar" *ngIf="!remoteDesktopService.isFullScreen()">
         <template [ngTemplateOutlet]="toolbarItems"></template>
       </nav>
-      <!-- End normal toolbar -->
+
       <!-- Full screen toolbar -->
       <nav
         class="ngx-remote-desktop-toolbar ngx-remote-desktop-toolbar-fullscreen"
-        *ngIf="manager.isFullScreen()"
+        *ngIf="remoteDesktopService.isFullScreen()"
         [@toolbarAnimation]="toolbarVisible"
         #toolbar
       >
         <template [ngTemplateOutlet]="toolbarItems"></template>
       </nav>
-      <!-- End full screen toolbar -->
+
       <section class="ngx-remote-desktop-container">
         <!-- Connecting message -->
         <div *ngIf="(state | async) === states.CONNECTING">
@@ -78,7 +75,6 @@ import { ErrorMessageComponent } from '../messages/error-message.component';
           >
           </ngx-remote-desktop-message>
         </div>
-        <!-- End connecting message -->
 
         <!-- Disconnected message -->
         <div *ngIf="(state | async) === states.DISCONNECTED">
@@ -94,14 +90,13 @@ import { ErrorMessageComponent } from '../messages/error-message.component';
             type="error"
           >
             <button
-              (click)="manager.onReconnect.next(true)"
+              (click)="remoteDesktopService.onReconnect.next(true)"
               class="ngx-remote-desktop-message-body-btn"
             >
               Reconnect
             </button>
           </ngx-remote-desktop-message>
         </div>
-        <!-- End disconnected message -->
 
         <!-- Error message -->
         <div *ngIf="(state | async) === states.ERROR">
@@ -116,49 +111,55 @@ import { ErrorMessageComponent } from '../messages/error-message.component';
             type="error"
           >
             <button
-              (click)="manager.onReconnect.next(true)"
+              (click)="remoteDesktopService.onReconnect.next(true)"
               class="ngx-remote-desktop-message-body-btn"
             >
               Connect
             </button>
           </ngx-remote-desktop-message>
         </div>
-        <!-- End error message -->
 
         <!-- Display -->
         <ngx-remote-desktop-display
           *ngIf="(state | async) === states.CONNECTED"
-          [manager]="manager"
+          [manager]="remoteDesktopService"
           (onMouseMove)="handleDisplayMouseMove($event)"
         >
         </ngx-remote-desktop-display>
-        <!-- End display -->
+
+        <!-- File manager -->
+        <div class="file-manager-dialog" [class.show]="showFileManager">
+          <ng-content select="ngx-remote-desktop-file-manager"></ng-content>
+        </div>
+
+        <!-- File transfers -->
+        <div id="file-transfer-dialog" *ngIf="hasTransfers()">
+          <ngx-file-transfer-manager></ngx-file-transfer-manager>
+        </div>
       </section>
+
+
+
       <section
-        [class.ngx-remote-desktop-status-bar-hidden]="manager.isFullScreen()"
+        [class.ngx-remote-desktop-status-bar-hidden]="remoteDesktopService.isFullScreen()"
       >
-        <ng-content select="ngx-remote-desktop-status-bar"></ng-content>
+
       </section>
     </div>
   `,
+  styleUrls: ['./remote-desktop.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.Default,
   animations: [
     trigger('toolbarAnimation', [
-      state('1', style({ transform: 'translateX(0%)' })),
-      state('0', style({ transform: 'translateX(-100%)' })),
+      state('1', style({transform: 'translateX(0%)'})),
+      state('0', style({transform: 'translateX(-100%)'})),
       transition('1 => 0', animate('200ms 200ms ease-out')),
       transition('0 => 1', animate('225ms ease-in')),
     ]),
   ],
 })
 export class RemoteDesktopComponent implements OnInit, OnDestroy {
-  /**
-   * Client that manages the connection to the remote desktop
-   */
-  @Input()
-  public manager: RemoteDesktopService;
-
   /**
    * Guacamole has more states than the list below however for the component we are only interested
    * in managing four states.
@@ -177,20 +178,25 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
     this.states.CONNECTING
   );
 
-  @ContentChild(ConnectingMessageComponent, { static: true })
+  @Input() showFileManager: boolean;
+
+  @ContentChild(ConnectingMessageComponent, {static: true})
   public connectingMessage: ConnectingMessageComponent;
 
-  @ContentChild(DisconnectedMessageComponent, { static: true })
+  @ContentChild(DisconnectedMessageComponent, {static: true})
   public disconnectedMessage: DisconnectedMessageComponent;
 
-  @ContentChild(ErrorMessageComponent, { static: true })
+  @ContentChild(ErrorMessageComponent, {static: true})
   public errorMessage: ErrorMessageComponent;
 
-  @ViewChild('container', { static: true })
+  @ViewChild('container', {static: true})
   private container: ElementRef;
 
-  @ViewChild('toolbar', { static: true })
+  @ViewChild('toolbar', {static: true})
   private toolbar: ElementRef;
+
+  @ContentChild(FileManagerComponent)
+  private fileManager: FileManagerComponent
 
   /**
    * Subscriptions
@@ -198,9 +204,22 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   /**
-   * Hide or show the toolbar
+   * Hide or show elements
    */
   public toolbarVisible: boolean = true;
+
+  /**
+   * Whether a drag/drop operation is currently in progress (the user has
+   * dragged a file over the Guacamole connection but has not yet dropped it).
+   */
+  @HostBinding('class.drop-zone-active')
+  public dropPending: boolean;
+
+  constructor(
+    public remoteDesktopService: RemoteDesktopService,
+    private fsService: ManagedFilesystemService,
+  ) {
+  }
 
   /**
    * Subscribe to the connection state  and full screen state when the component is initialised
@@ -216,15 +235,20 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
     this.unbindSubscriptions();
   }
 
+  public hasTransfers(): boolean {
+    const u = this.remoteDesktopService.getUploads();
+    return !!(u && u.length);
+  };
+
   /**
    * Bind the subscriptions
    */
   private bindSubscriptions(): void {
     this.subscriptions.push(
-      this.manager.onStateChange.subscribe(this.handleState.bind(this))
+      this.remoteDesktopService.onStateChange.subscribe(this.handleState.bind(this))
     );
     this.subscriptions.push(
-      this.manager.onFullScreen.subscribe(this.handleFullScreen.bind(this))
+      this.remoteDesktopService.onFullScreen.subscribe(this.handleFullScreen.bind(this))
     );
   }
 
@@ -294,7 +318,7 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
     if (screenfull.isFullscreen) {
       return;
     }
-    
+
     const containerElement = this.container.nativeElement;
     if (screenfull.isEnabled) {
       screenfull.on('change', (change: any) => {
@@ -302,7 +326,7 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
           return;
         }
         if (!screenfull.isFullscreen) {
-          this.manager.setFullScreen(false);
+          this.remoteDesktopService.setFullScreen(false);
         }
         this.handleToolbar();
       });
@@ -321,7 +345,7 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
   }
 
   private handleToolbar(): void {
-    this.toolbarVisible = this.manager.isFullScreen() ? false : true;
+    this.toolbarVisible = this.remoteDesktopService.isFullScreen() ? false : true;
   }
 
   /**
@@ -329,7 +353,7 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
    * @param event Mouse event
    */
   public handleDisplayMouseMove($event: any): void {
-    if (!this.manager.isFullScreen()) {
+    if (!this.remoteDesktopService.isFullScreen()) {
       return;
     }
     const toolbarWidth = this.toolbar.nativeElement.clientWidth;
@@ -340,7 +364,7 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
 
   @HostListener('document:mousemove', ['$event'])
   private onDocumentMousemove($event: MouseEvent) {
-    if (!this.manager.isFullScreen()) {
+    if (!this.remoteDesktopService.isFullScreen()) {
       return;
     }
     const toolbarWidth = this.toolbar.nativeElement.clientWidth;
@@ -352,4 +376,53 @@ export class RemoteDesktopComponent implements OnInit, OnDestroy {
       this.toolbarVisible = false;
     }
   }
+
+  @HostListener('dragenter', ['$event'])
+  @HostListener('dragover', ['$event'])
+  /**
+   * Displays a visual indication that dropping the file currently
+   * being dragged is possible. Further propagation and default behavior
+   * of the given event is automatically prevented.
+   */
+  notifyDragStart(e) {
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.dropPending = true;
+  };
+
+  @HostListener('dragleave', ['$event'])
+  /**
+   * Removes the visual indication that dropping the file currently
+   * being dragged is possible. Further propagation and default behavior
+   * of the given event is automatically prevented.
+   */
+  notifyDragEnd(e) {
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.dropPending = false;
+  };
+
+  @HostListener('drop', ['$event'])
+  dropFile(e) {
+    this.notifyDragEnd(e)
+
+    // Upload each file
+    const files = e.dataTransfer.files;
+    for (let i = 0; i < files.length; i++) {
+      const ul = this.remoteDesktopService.uploadFile(files[i], this.fileManager.fs, this.fileManager.fs.currentDirectory);
+
+      // Refresh filesystem when it's complete
+      timer(0, 100).pipe(
+        takeWhile(() => !ul.isCompleted()),
+        finalize(() => {
+          console.log('Refreshing FS')
+          this.fsService.refresh(this.fileManager.fs, this.fileManager.fs.currentDirectory).then()
+        })
+      ).subscribe()
+    }
+  };
 }

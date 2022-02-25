@@ -1,0 +1,103 @@
+<!-- We import SVGs like this to avoid complicating the library setup at the expense of some redundancy -->
+
+<div class="file-manager-container">
+  <div class="select-filesystem">
+    <!--  In the future we might want to select the filesystem, usually we got one only -->
+  </div>
+  <div class="current-filesystem" *ngIf="fs.currentDirectory">
+    <!-- Top bar -->
+    <div class="cwd">
+      <div class="fs-element">
+        <i class="fm-icon" title="Current directory">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+            <path
+              d="M527.9 224H480v-48c0-26.5-21.5-48-48-48H272l-64-64H48C21.5 64 0 85.5 0 112v288c0 26.5 21.5 48 48 48h400c16.5 0 31.9-8.5 40.7-22.6l79.9-128c20-31.9-3-73.4-40.7-73.4zM48 118c0-3.3 2.7-6 6-6h134.1l64 64H426c3.3 0 6 2.7 6 6v42H152c-16.8 0-32.4 8.8-41.1 23.2L48 351.4zm400 282H72l77.2-128H528z"/>
+          </svg>
+        </i>
+        <span>{{fs.currentDirectory.streamName}}</span>
+      </div>
+
+      <div style="flex-grow: 1"></div>
+
+      <button class="ngx-remote-desktop-button refresh-button" [disabled]="!fs.currentDirectory"
+              (click)="cd(fs.currentDirectory)">
+        <i>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path
+              d="M500 8h-27.711c-6.739 0-12.157 5.548-11.997 12.286l2.347 98.568C418.075 51.834 341.788 7.73 255.207 8.001 118.82 8.428 7.787 120.009 8 256.396 8.214 393.181 119.165 504 256 504c63.926 0 122.202-24.187 166.178-63.908 5.113-4.618 5.354-12.561.482-17.433l-19.738-19.738c-4.498-4.498-11.753-4.785-16.501-.552C351.787 433.246 306.105 452 256 452c-108.322 0-196-87.662-196-196 0-108.322 87.662-196 196-196 79.545 0 147.941 47.282 178.675 115.302l-126.389-3.009c-6.737-.16-12.286 5.257-12.286 11.997V212c0 6.627 5.373 12 12 12h192c6.627 0 12-5.373 12-12V20c0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </i>
+      </button>
+      <button class="ngx-remote-desktop-button up-button" [disabled]="!fs.currentDirectory.parent"
+              (click)="cd(fs.currentDirectory.parent)">
+        <i>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+            <path
+              d="M19.716 184.485l19.626 19.626c4.753 4.753 12.484 4.675 17.14-.173L134 123.22V468c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12V123.22l77.518 80.717c4.656 4.849 12.387 4.927 17.14.173l19.626-19.626c4.686-4.686 4.686-12.284 0-16.971L168.485 35.716c-4.686-4.686-12.284-4.686-16.971 0L19.716 167.515c-4.686 4.686-4.686 12.284 0 16.97z"/>
+          </svg>
+        </i>
+        <span>Up</span>
+      </button>
+    </div>
+
+    <div class="files-list-container">
+      <table>
+        <tbody>
+        <tr *ngFor="let f of currentDirFiles">
+          <td class="node" *ngIf="f.type === FileType.DIRECTORY">
+            <div class="fs-element directory">
+              <i class="fm-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/>
+                </svg>
+              </i>
+              <span (click)="cd(f)">{{f.name}}</span>
+            </div>
+          </td>
+          <td class="node" *ngIf="f.type === FileType.NORMAL">
+            <div class="fs-element file">
+              <i class="fm-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                  <path
+                    d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"/>
+                </svg>
+              </i>
+              <span>{{f.name}}</span>
+            </div>
+          </td>
+          <td class="actions">
+            <div>
+              <button class="ngx-remote-desktop-button" *ngIf="f.type === FileType.NORMAL"
+                      title="Download file"
+                      (click)="download(f)">
+                <i>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                    <path
+                      d="M528 288h-92.1l46.1-46.1c30.1-30.1 8.8-81.9-33.9-81.9h-64V48c0-26.5-21.5-48-48-48h-96c-26.5 0-48 21.5-48 48v112h-64c-42.6 0-64.2 51.7-33.9 81.9l46.1 46.1H48c-26.5 0-48 21.5-48 48v128c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V336c0-26.5-21.5-48-48-48zm-400-80h112V48h96v160h112L288 368 128 208zm400 256H48V336h140.1l65.9 65.9c18.8 18.8 49.1 18.7 67.9 0l65.9-65.9H528v128zm-88-64c0-13.3 10.7-24 24-24s24 10.7 24 24-10.7 24-24 24-24-10.7-24-24z"/>
+                  </svg>
+                </i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Buttons -->
+    <div class="actions">
+      <button class="ngx-remote-desktop-button" [disabled]="!fs.currentDirectory" (click)="selectForUpload()">
+        <i class="upload-button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+            <path
+              d="M528 288H384v-32h64c42.6 0 64.2-51.7 33.9-81.9l-160-160c-18.8-18.8-49.1-18.7-67.9 0l-160 160c-30.1 30.1-8.7 81.9 34 81.9h64v32H48c-26.5 0-48 21.5-48 48v128c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V336c0-26.5-21.5-48-48-48zm-400-80L288 48l160 160H336v160h-96V208H128zm400 256H48V336h144v32c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-32h144v128zm-40-64c0 13.3-10.7 24-24 24s-24-10.7-24-24 10.7-24 24-24 24 10.7 24 24z"/>
+          </svg>
+        </i>
+        <span>Upload</span>
+      </button>
+      <input type="file" [multiple]="true" style="display: none" (change)="handleFileInput($any($event.target).files)"
+             #fileInput>
+    </div>
+  </div>
+</div>

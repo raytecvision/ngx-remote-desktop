@@ -4,7 +4,9 @@
 
 export * from './lib/remote-desktop.module';
 export * from './lib/remote-desktop.service';
+export * from './lib/tunnel-rest-api.service';
 export * from './lib/toolbar-item/toolbar-item.component';
+export * from './lib/file-manager/file-manager.component';
 export * from './lib/remote-desktop/remote-desktop.component';
 export * from './lib/status-bar-item/status-bar-item.component';
 export * from './lib/status-bar/status-bar.component';

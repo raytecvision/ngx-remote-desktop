@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -9,11 +10,10 @@ import {
   Output,
   Renderer2,
   ViewChild,
-  AfterViewChecked,
 } from '@angular/core';
-import { Client, Display, Keyboard, Mouse } from '@raytecvision/guacamole-common-js';
-import { BehaviorSubject, Subscription, Observable } from 'rxjs';
-import { RemoteDesktopService } from '../remote-desktop.service';
+import {Client, Display, Keyboard, Mouse} from '@raytecvision/guacamole-common-js';
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {RemoteDesktopService} from '../remote-desktop.service';
 
 @Component({
   selector: 'ngx-remote-desktop-display',
@@ -57,7 +57,10 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
    */
   private subscriptions: Subscription[] = [];
 
-  constructor(private viewport: ElementRef, private renderer: Renderer2) {
+  constructor(
+    private viewport: ElementRef,
+    private renderer: Renderer2,
+    ) {
   }
 
   /**
@@ -81,7 +84,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.setDisplayScale();
   }
 
-  /** 
+  /**
    * Bind all subscriptions
    */
   private bindSubscriptions(): void {
@@ -89,7 +92,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.subscriptions.push(this.manager.onFocused.subscribe(this.handleFocused.bind(this)));
   }
 
-  /** 
+  /**
    * Unbind all subscriptions
    */
   private unbindSubscriptions(): void {
@@ -252,7 +255,7 @@ export class DisplayComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   /**
    * Send key down event to the remote desktop
-   * @param key 
+   * @param key
    */
   private handleKeyDown(key: any): void {
       this.getClient().sendKeyEvent(1, key);

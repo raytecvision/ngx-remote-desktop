@@ -1,7 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { Client, StringReader, Tunnel } from '@raytecvision/guacamole-common-js';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpParams} from '@angular/common/http';
+import {Client, InputStream, Object, Status, StringReader, Tunnel} from '@raytecvision/guacamole-common-js';
+import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
+import {File as ManagedFile, FileType, ManagedFilesystem} from './managed-filesystem';
+import {ManagedFilesystemService} from './managed-filesystem.service';
+import {ManagedFileTransferState, ManagedFileUpload, StreamState} from './managed-file-upload';
+import {TunnelRestApiService} from './tunnel-rest-api.service';
 
 /**
  * Manages the connection to the remote desktop
@@ -93,12 +97,31 @@ export class RemoteDesktopService {
   private tunnel: Tunnel;
 
   /**
-   * Set up the manager
-   * @param tunnel  WebsocketTunnel, HTTPTunnel or ChainedTunnel
-   * @param parameters Query parameters to send to the tunnel url
+   * All currently-exposed filesystems. When the Guacamole server exposes
+   * a filesystem object, that object will be made available as a
+   * ManagedFilesystem within this array.
    */
-  constructor(tunnel: Tunnel) {
-    this.tunnel = tunnel;
+  private filesystems: ManagedFilesystem[] = [];
+
+  /**
+   * All uploaded files. As files are uploaded, their progress can be
+   * observed through the elements of this array. It is intended that
+   * this array be manipulated externally as needed.
+   */
+  private uploads: ManagedFileUpload[] = [];
+
+  constructor(
+    private filesystemService: ManagedFilesystemService,
+    private tunnelRestApiService: TunnelRestApiService,
+  ) {
+  }
+
+  /**
+   * Set up the manager
+   * @param t  WebsocketTunnel, HTTPTunnel or ChainedTunnel
+   */
+  public initialize(t: Tunnel) {
+    this.tunnel = t;
     this.client = new Client(this.tunnel);
   }
 
@@ -161,6 +184,13 @@ export class RemoteDesktopService {
    */
   public getTunnel(): Tunnel {
     return this.tunnel;
+  }
+
+  /**
+   * Get the filesystems published by guacamole
+   */
+  public getFilesystems(): ManagedFilesystem[] {
+    return this.filesystems;
   }
 
   /**
@@ -248,6 +278,142 @@ export class RemoteDesktopService {
   }
 
   /**
+   * Uploads the given file to the server through this client.
+   * The file transfer can be monitored through the corresponding entry in
+   * the uploads array of the given managedClient.
+   *
+   * @param file
+   *     The file to upload.
+   *
+   * @param [fs]
+   *     The filesystem to upload the file to, if any. If not specified, the
+   *     file will be sent as a generic Guacamole file stream.
+   *
+   * @param [directory=fs.currentDirectory]
+   *     The directory within the given filesystem to upload the file to. If
+   *     not specified, but a filesystem is given, the current directory of
+   *     that filesystem will be used.
+   */
+  public uploadFile(file: File, fs: ManagedFilesystem, directory: ManagedFile): ManagedFileUpload {
+    if (directory.type !== FileType.DIRECTORY) {
+      throw new Error('upload destination is not a directory')
+    }
+
+    // Use generic Guacamole file streams by default
+    let object: Object = null;
+    let streamName: string = null;
+
+    // If a filesystem is given, determine the destination object and stream
+    if (fs) {
+      object = fs.object;
+      streamName = (directory || fs.currentDirectory).streamName + '/' + file.name;
+    }
+
+    // Start and manage file upload
+    const instance = this.createUploadInstance(file, object, streamName)
+    this.uploads.push(instance);
+    return instance;
+  }
+
+  /**
+   * Returns the current uploads.
+   */
+  public getUploads(): ManagedFileUpload[] {
+    return this.uploads;
+  };
+
+  /**
+   * Removes completed or failed uploads from the list.
+   */
+  public clearCompletedUploads() {
+    this.uploads = this.uploads.filter(function isUploadInProgress(upload) {
+      return RemoteDesktopService.isTransferInProgress(upload.transferState);
+    });
+  }
+
+  /**
+   * Creates a new ManagedFileUpload which uploads the given file to the
+   * server through the given Guacamole client.
+   *
+   * @param file
+   *     The file to upload.
+   *
+   * @param [object]
+   *     The object to upload the file to, if any, such as a filesystem
+   *     object.
+   *
+   * @param [streamName]
+   *     The name of the stream to upload the file to. If an object is given,
+   *     this must be specified.
+   *
+   * @return
+   *     A new ManagedFileUpload object which can be used to track the
+   *     progress of the upload.
+   */
+  private createUploadInstance(file: File, object: Object, streamName: string): ManagedFileUpload {
+    var managedFileUpload = new ManagedFileUpload(null);
+
+    // Open file for writing
+    var stream;
+    if (!object) {
+      stream = this.client.createFileStream(file.type, file.name);
+    } else {
+      // If object/streamName specified, upload to that instead of a file stream
+      stream = object.createOutputStream(file.type, streamName);
+    }
+
+    // Init managed upload
+    managedFileUpload.filename = file.name;
+    managedFileUpload.mimetype = file.type;
+    managedFileUpload.progress = 0;
+    managedFileUpload.length = file.size;
+
+    // Notify that stream is open
+    managedFileUpload.transferState.setStreamState(StreamState.OPEN, null)
+
+    // Begin uploading file once stream is acknowledged
+    stream.onack = (status) => {
+
+      // Notify of any errors from the Guacamole server
+      if (status.isError()) {
+        managedFileUpload.transferState.setStreamState(StreamState.ERROR, status.code)
+        stream.sendEnd();
+        return;
+      }
+
+      // Begin upload
+      this.tunnelRestApiService.uploadToStream(
+        this.tunnel.uuid,
+        stream,
+        file,
+        (length) => {
+          managedFileUpload.progress = length;
+        }
+      ).then(() => {
+          // Upload complete
+          managedFileUpload.progress = file.size;
+          managedFileUpload.transferState.setStreamState(StreamState.CLOSED, null)
+        },
+
+        (error) => {
+          if (error.type === 'STREAM_ERROR') {
+            // Use provide status code if the error is coming from the stream
+            managedFileUpload.transferState.setStreamState(StreamState.ERROR, error.statusCode)
+          } else {
+            // Fail with internal error for all other causes
+            managedFileUpload.transferState.setStreamState(StreamState.ERROR, Status.Code.INTERNAL_ERROR)
+          }
+        }
+      );
+
+      // Ignore all further acks
+      stream.onack = null;
+    };
+
+    return managedFileUpload;
+  }
+
+  /**
    * Set the connection state and emit the new state to any subscribers
    * @param state Connection state
    */
@@ -275,10 +441,32 @@ export class RemoteDesktopService {
   }
 
   /**
+   * Receive published filesystems and store them
+   * @param object
+   * @param name
+   * @private
+   */
+  private handleFilesystem(object: Object, name: string): void {
+    this.filesystemService.createInstance(this.tunnel, this.client, object, name).then(fs => this.filesystems.push(fs))
+  }
+
+  /**
+   * Handle any received file
+   * @param stream
+   * @param mimetype
+   * @param filename
+   * @private
+   */
+  private handleFileReceived(stream: InputStream, mimetype: string, filename: string): void {
+    this.tunnelRestApiService.downloadStream(this.tunnel.uuid, stream, mimetype, filename);
+
+  }
+
+  /**
    * Build the URL query parameters to send to the tunnel connection
    */
   private buildParameters(parameters = {}): string {
-    let params = new HttpParams({ fromObject: parameters });
+    let params = new HttpParams({fromObject: parameters});
     return params.toString();
   }
 
@@ -286,9 +474,12 @@ export class RemoteDesktopService {
    * Bind the client and tunnel event handlers
    */
   private bindEventHandlers(): void {
+    // console.log('Binding events');
     this.client.onerror = this.handleClientError.bind(this);
     this.client.onstatechange = this.handleClientStateChange.bind(this);
     this.client.onclipboard = this.handleClipboard.bind(this);
+    this.client.onfilesystem = this.handleFilesystem.bind(this);
+    this.client.onfile = this.handleFileReceived.bind(this);
     this.tunnel.onerror = this.handleTunnelError.bind(this);
     this.tunnel.onstatechange = this.handleTunnelStateChange.bind(this);
     /*
@@ -297,7 +488,7 @@ export class RemoteDesktopService {
     this.tunnel.oninstruction = ((oninstruction) => {
       return (opcode: string, parameters: any) => {
         oninstruction(opcode, parameters);
-        this.onTunnelInstruction.next({ opcode, parameters });
+        this.onTunnelInstruction.next({opcode, parameters});
       };
     })(this.tunnel.oninstruction);
   }
@@ -343,10 +534,12 @@ export class RemoteDesktopService {
   /**
    * Handle any tunnel errors by disconnecting and updating the connection state
    * @param status Status received from the tunnel
+   * See https://guacamole.apache.org/doc/gug/protocol-reference.html for error reference
    */
   private handleTunnelError(status: any): void {
     this.disconnect();
     this.setState(RemoteDesktopService.STATE.TUNNEL_ERROR);
+    console.error('Tunnel error', status);
   }
 
   /**
@@ -365,4 +558,26 @@ export class RemoteDesktopService {
         break;
     }
   }
+
+  /**
+   * Determines whether the given file transfer state indicates an
+   * in-progress transfer.
+   *
+   * @param transferState
+   *     The file transfer state to check.
+   */
+  private static isTransferInProgress(transferState: ManagedFileTransferState): boolean {
+    switch (transferState.streamState) {
+
+      // IDLE or OPEN file transfers are active
+      case StreamState.IDLE:
+      case StreamState.OPEN:
+        return true;
+
+      // All others are not active
+      default:
+        return false;
+
+    }
+  };
 }
