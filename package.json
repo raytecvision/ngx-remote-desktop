@@ -21,7 +21,7 @@
     "@angular/platform-browser": "~12.2.8",
     "@angular/platform-browser-dynamic": "~12.2.8",
     "@angular/router": "~12.2.8",
-    "@raytecvision/guacamole-common-js": "0.0.1",
+    "@raytecvision/guacamole-common-js": "0.0.2",
     "file-saver": "^2.0.5",
     "rxjs": "^6.6.7",
     "screenfull": "^5.1.0",

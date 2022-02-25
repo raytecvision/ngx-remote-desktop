@@ -16,7 +16,7 @@
     "@angular/common": "^11.1.0",
     "@angular/core": "^11.1.0",
     "screenfull": "^5.1.0",
-    "@raytecvision/guacamole-common-js": "0.0.1"
+    "@raytecvision/guacamole-common-js": "0.0.2"
   },
   "dependencies": {
     "tslib": "^2.0.0"
