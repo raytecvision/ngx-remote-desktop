@@ -4,7 +4,7 @@
   <div class="select-filesystem">
     <!--  In the future we might want to select the filesystem, usually we got one only -->
   </div>
-  <div class="current-filesystem" *ngIf="fs.currentDirectory">
+  <div class="current-filesystem" *ngIf="fs && fs.currentDirectory">
     <!-- Top bar -->
     <div class="cwd">
       <div class="fs-element">
