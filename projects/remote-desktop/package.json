@@ -11,10 +11,10 @@
     "url": "https://github.com/raytecvision/ngx-remote-desktop"
   },
   "homepage": "https://github.com/raytecvision/ngx-remote-desktop#readme",
-  "version": "2.1.0-alpha.14",
+  "version": "2.1.0-alpha.15",
   "peerDependencies": {
-    "@angular/common": "^11.1.0",
-    "@angular/core": "^11.1.0",
+    "@angular/common": "^13.3.0",
+    "@angular/core": "^13.3.0",
     "screenfull": "^5.1.0",
     "@raytecvision/guacamole-common-js": "0.0.2"
   },
