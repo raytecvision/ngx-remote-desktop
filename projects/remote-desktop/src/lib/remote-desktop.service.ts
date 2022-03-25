@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpParams} from '@angular/common/http';
 import {Client, InputStream, Object, Status, StringReader, Tunnel} from '@raytecvision/guacamole-common-js';
-import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, ReplaySubject, Subject, Observable} from 'rxjs';
 import {File as ManagedFile, FileType, ManagedFilesystem} from './managed-filesystem';
 import {ManagedFilesystemService} from './managed-filesystem.service';
 import {ManagedFileTransferState, ManagedFileUpload, StreamState} from './managed-file-upload';
@@ -103,6 +103,8 @@ export class RemoteDesktopService {
    */
   private filesystems: ManagedFilesystem[] = [];
 
+  private subjectFilesystems = new ReplaySubject<ManagedFilesystem>();
+
   /**
    * All uploaded files. As files are uploaded, their progress can be
    * observed through the elements of this array. It is intended that
@@ -189,8 +191,8 @@ export class RemoteDesktopService {
   /**
    * Get the filesystems published by guacamole
    */
-  public getFilesystems(): ManagedFilesystem[] {
-    return this.filesystems;
+  public getFilesystems(): Observable<ManagedFilesystem> {
+    return this.subjectFilesystems.asObservable();
   }
 
   /**
@@ -447,7 +449,10 @@ export class RemoteDesktopService {
    * @private
    */
   private handleFilesystem(object: Object, name: string): void {
-    this.filesystemService.createInstance(this.tunnel, this.client, object, name).then(fs => this.filesystems.push(fs))
+    this.filesystemService.createInstance(this.tunnel, this.client, object, name).then(fs => {
+      this.filesystems.push(fs);
+      this.subjectFilesystems.next(fs);
+    }).catch(err => this.handleTunnelError(err.message))
   }
 
   /**
