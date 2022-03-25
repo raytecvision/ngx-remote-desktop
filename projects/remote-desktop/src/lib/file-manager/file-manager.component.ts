@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {RemoteDesktopService} from '../remote-desktop.service';
 import {File, FileType, ManagedFilesystem} from '../managed-filesystem';
 import {ManagedFilesystemService} from '../managed-filesystem.service';
-import {timer} from 'rxjs';
+import {Subscription, timer} from 'rxjs';
 import {finalize, takeWhile} from 'rxjs/operators';
 
 /**
@@ -14,7 +14,7 @@ import {finalize, takeWhile} from 'rxjs/operators';
   templateUrl: './file-manager.component.html',
   styleUrls: ['./file-manager.component.scss']
 })
-export class FileManagerComponent implements OnInit {
+export class FileManagerComponent implements OnInit, OnDestroy {
   filesystems: ManagedFilesystem[];
   fs: ManagedFilesystem;
 
@@ -28,11 +28,20 @@ export class FileManagerComponent implements OnInit {
   ) {
   }
 
+  private subscriptions: Subscription[] = [];
+
   ngOnInit(): void {
-    this.filesystems = this.manager.getFilesystems()
-    if (this.filesystems.length > 0) {
-      this.loadFilesystem(this.filesystems[0]);
-    }
+    this.subscriptions.push(
+      this.manager.getFilesystems().subscribe(fs => {
+        this.loadFilesystem(fs);
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => {
+      subscription.unsubscribe()
+    });
   }
 
   get currentDirFiles(): File[] {
