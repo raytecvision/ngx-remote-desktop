@@ -150,5 +150,7 @@
       }
     }
   },
-  "defaultProject": "guac-demo"
+  "cli": {
+    "analytics": false
+  }
 }
