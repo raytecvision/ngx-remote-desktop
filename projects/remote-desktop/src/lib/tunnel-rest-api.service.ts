@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {InputStream, OutputStream, Status} from '@raytecvision/guacamole-common-js';
+import {InputStream, OutputStream, Status} from 'guacamole-common-ts';
 import {DOCUMENT} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';

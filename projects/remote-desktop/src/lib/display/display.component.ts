@@ -11,15 +11,15 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import {Client, Display, Keyboard, Mouse} from '@raytecvision/guacamole-common-js';
+import {Client, Display, Keyboard, Mouse} from 'guacamole-common-ts';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {RemoteDesktopService} from '../remote-desktop.service';
 
 @Component({
-  selector: 'ngx-remote-desktop-display',
-  host: { class: 'ngx-remote-desktop-viewport' },
+  selector: 'guacamole-remote-desktop-display',
+  host: { class: 'guacamole-remote-desktop-viewport' },
   template: `
-      <div class="ngx-remote-desktop-display" #display>
+      <div class="guacamole-remote-desktop-display" #display>
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush

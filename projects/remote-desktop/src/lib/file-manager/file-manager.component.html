@@ -19,7 +19,7 @@
 
       <div style="flex-grow: 1"></div>
 
-      <button class="ngx-remote-desktop-button refresh-button" [disabled]="!fs.currentDirectory"
+      <button class="guacamole-remote-desktop-button refresh-button" [disabled]="!fs.currentDirectory"
               (click)="cd(fs.currentDirectory)">
         <i>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -28,7 +28,7 @@
           </svg>
         </i>
       </button>
-      <button class="ngx-remote-desktop-button up-button" [disabled]="!fs.currentDirectory.parent"
+      <button class="guacamole-remote-desktop-button up-button" [disabled]="!fs.currentDirectory.parent"
               (click)="cd(fs.currentDirectory.parent)">
         <i>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
@@ -68,7 +68,7 @@
           </td>
           <td class="actions">
             <div>
-              <button class="ngx-remote-desktop-button" *ngIf="f.type === FileType.NORMAL"
+              <button class="guacamole-remote-desktop-button" *ngIf="f.type === FileType.NORMAL"
                       title="Download file"
                       (click)="download(f)">
                 <i>
@@ -87,7 +87,7 @@
 
     <!-- Buttons -->
     <div class="actions">
-      <button class="ngx-remote-desktop-button" [disabled]="!fs.currentDirectory" (click)="selectForUpload()">
+      <button class="guacamole-remote-desktop-button" [disabled]="!fs.currentDirectory" (click)="selectForUpload()">
         <i class="upload-button">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
             <path

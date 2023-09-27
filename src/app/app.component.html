@@ -1,64 +1,49 @@
-<div id="g_id_onload"
-     data-client_id="760726185740-3f2s02ve1k96pikiis7bvtbak9lpva1t.apps.googleusercontent.com"
-     data-context="signin"
-     data-ux_mode="popup"
-     data-login_uri="http://localhost:4200"
-     data-auto_prompt="false">
-</div>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-shape="rectangular"
-     data-theme="outline"
-     data-text="signin_with"
-     data-size="large"
-     data-logo_alignment="left">
-</div>
 <div class="vdi-container">
-<ngx-remote-desktop [showFileManager]="fileManagerVisible">
+<guacamole-remote-desktop [showFileManager]="fileManagerVisible">
     <!-- Toolbar items -->
-    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleTakeScreenshot()" align="left" >
+    <guacamole-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleTakeScreenshot()" align="left" >
       Take screenshot
-    </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleClipboard()" align="left" >
+    </guacamole-remote-desktop-toolbar-item>
+    <guacamole-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleClipboard()" align="left" >
       Clipboard
-    </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="toggleFileManager()" align="left" >
+    </guacamole-remote-desktop-toolbar-item>
+    <guacamole-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="toggleFileManager()" align="left" >
       File Manager
-    </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleDisconnect()" align="right">
+    </guacamole-remote-desktop-toolbar-item>
+    <guacamole-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isConnected()" (click)="handleDisconnect()" align="right">
       Disconnect
-    </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="!remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleEnterFullScreen()" align="right">
+    </guacamole-remote-desktop-toolbar-item>
+    <guacamole-remote-desktop-toolbar-item *ngIf="!remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleEnterFullScreen()" align="right">
       Enter full screen
-    </ngx-remote-desktop-toolbar-item>
-    <ngx-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleExitFullScreen()" align="right">
+    </guacamole-remote-desktop-toolbar-item>
+    <guacamole-remote-desktop-toolbar-item *ngIf="remoteDesktopService.isFullScreen() && remoteDesktopService.isConnected()" (click)="handleExitFullScreen()" align="right">
       Exit full screen
-    </ngx-remote-desktop-toolbar-item>
+    </guacamole-remote-desktop-toolbar-item>
 
     <!-- Override connection state messages -->
-    <ngx-remote-desktop-connecting-message>
-      <div class="ngx-remote-desktop-message-title ngx-remote-desktop-message-title-success">
+    <guacamole-remote-desktop-connecting-message>
+      <div class="guacamole-remote-desktop-message-title guacamole-remote-desktop-message-title-success">
         CONNECTING TO REMOTE DESKTOP
       </div>
-      <div class="ngx-remote-desktop-message-body">
+      <div class="guacamole-remote-desktop-message-body">
         Attempting to connect to the remote desktop. Waiting for response...
       </div>
-    </ngx-remote-desktop-connecting-message>
+    </guacamole-remote-desktop-connecting-message>
 
     <!-- Status bar -->
-    <ngx-remote-desktop-status-bar *ngIf="remoteDesktopService.isConnected()">
-      <ngx-remote-desktop-status-bar-item>
+    <guacamole-remote-desktop-status-bar *ngIf="remoteDesktopService.isConnected()">
+      <guacamole-remote-desktop-status-bar-item>
           You are currently connected to: <strong>Machine 1</strong>
-      </ngx-remote-desktop-status-bar-item>
-      <ngx-remote-desktop-status-bar-item>
+      </guacamole-remote-desktop-status-bar-item>
+      <guacamole-remote-desktop-status-bar-item>
           <span>Need help? Look at our <a href="#">documentation</a></span>
-      </ngx-remote-desktop-status-bar-item>
-    </ngx-remote-desktop-status-bar>
+      </guacamole-remote-desktop-status-bar-item>
+    </guacamole-remote-desktop-status-bar>
 
     <!-- File Manager -->
-    <ngx-remote-desktop-file-manager *ngIf="remoteDesktopService.isConnected()">
-    </ngx-remote-desktop-file-manager>
-  </ngx-remote-desktop>
+    <guacamole-remote-desktop-file-manager *ngIf="remoteDesktopService.isConnected()">
+    </guacamole-remote-desktop-file-manager>
+  </guacamole-remote-desktop>
 </div>
 

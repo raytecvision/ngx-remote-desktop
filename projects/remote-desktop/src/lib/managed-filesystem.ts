@@ -1,4 +1,4 @@
-import {Client, Object, Tunnel} from '@raytecvision/guacamole-common-js';
+import {Client, Object, Tunnel} from 'guacamole-common-ts';
 
 /**
  * Object which serves as a surrogate interface, encapsulating a Guacamole

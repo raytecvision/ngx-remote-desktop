@@ -1,6 +1,6 @@
-# ngx-remote-desktop 
+# guacamole-remote-desktop 
 
-`ngx-remote-desktop` is an Angular component for connecting to a remote desktop using the [guacamole remote desktop gateway](https://guacamole.apache.org/)
+`guacamole-remote-desktop` is an Angular component for connecting to a remote desktop using the [guacamole remote desktop gateway](https://guacamole.apache.org/)
 
 This is based off a previous work of ILLGrenoble with little tweaks to make it work on Angular 11. It is based on the angular-8 branch of the upstream repo.
 The work on this repo is highly experimental, and I have no prior experience on publishing packages to npm. Take this repo with a grain of salt.

@@ -5,17 +5,17 @@ import {Component, Input} from '@angular/core';
  * state changes
  */
 @Component({
-  selector: 'ngx-remote-desktop-message',
+  selector: 'guacamole-remote-desktop-message',
   template: `
-    <div class="ngx-remote-desktop-message">
+    <div class="guacamole-remote-desktop-message">
       <div
-        class="ngx-remote-desktop-message-title"
-        [class.ngx-remote-desktop-message-title-success]="type === 'success'"
-        [class.ngx-remote-desktop-message-title-error]="type === 'error'"
+        class="guacamole-remote-desktop-message-title"
+        [class.guacamole-remote-desktop-message-title-success]="type === 'success'"
+        [class.guacamole-remote-desktop-message-title-error]="type === 'error'"
       >
         {{ title | uppercase }}
       </div>
-      <div class="ngx-remote-desktop-message-body">
+      <div class="guacamole-remote-desktop-message-body">
         <p>{{ message }}</p>
         <ng-content></ng-content>
       </div>

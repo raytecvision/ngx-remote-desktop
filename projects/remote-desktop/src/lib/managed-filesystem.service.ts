@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Client, JSONReader, Object, Status, Tunnel} from '@raytecvision/guacamole-common-js';
+import {Client, JSONReader, Object, Status, Tunnel} from 'guacamole-common-ts';
 import {File, FileType, ManagedFilesystem} from './managed-filesystem';
 import {TunnelRestApiService} from './tunnel-rest-api.service';
 

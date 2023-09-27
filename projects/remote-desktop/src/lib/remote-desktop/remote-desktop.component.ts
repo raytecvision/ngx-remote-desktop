@@ -27,31 +27,31 @@ import {ManagedFilesystemService} from '../managed-filesystem.service';
  * The main component for displaying a remote desktop
  */
 @Component({
-  selector: 'ngx-remote-desktop',
+  selector: 'guacamole-remote-desktop',
   template: `
-    <div class="ngx-remote-desktop" #container>
+    <div class="guacamole-remote-desktop" #container>
       <!-- Toolbar items template -->
       <ng-template #toolbarItems>
-        <ul class="ngx-remote-desktop-toolbar-items">
+        <ul class="guacamole-remote-desktop-toolbar-items">
           <ng-content
-            select="ngx-remote-desktop-toolbar-item[align=left]"
+            select="guacamole-remote-desktop-toolbar-item[align=left]"
           ></ng-content>
         </ul>
-        <ul class="ngx-remote-desktop-toolbar-items">
+        <ul class="guacamole-remote-desktop-toolbar-items">
           <ng-content
-            select="ngx-remote-desktop-toolbar-item[align=right]"
+            select="guacamole-remote-desktop-toolbar-item[align=right]"
           ></ng-content>
         </ul>
       </ng-template>
 
       <!-- Normal toolbar -->
-      <nav class="ngx-remote-desktop-toolbar" *ngIf="!remoteDesktopService.isFullScreen()">
+      <nav class="guacamole-remote-desktop-toolbar" *ngIf="!remoteDesktopService.isFullScreen()">
         <template [ngTemplateOutlet]="toolbarItems"></template>
       </nav>
 
       <!-- Full screen toolbar -->
       <nav
-        class="ngx-remote-desktop-toolbar ngx-remote-desktop-toolbar-fullscreen"
+        class="guacamole-remote-desktop-toolbar guacamole-remote-desktop-toolbar-fullscreen"
         *ngIf="remoteDesktopService.isFullScreen()"
         [@toolbarAnimation]="toolbarVisible"
         #toolbar
@@ -59,31 +59,31 @@ import {ManagedFilesystemService} from '../managed-filesystem.service';
         <template [ngTemplateOutlet]="toolbarItems"></template>
       </nav>
 
-      <section class="ngx-remote-desktop-container">
+      <section class="guacamole-remote-desktop-container">
         <!-- Connecting message -->
         <div *ngIf="(state | async) === states.CONNECTING">
-          <div class="ngx-remote-desktop-message" *ngIf="connectingMessage">
+          <div class="guacamole-remote-desktop-message" *ngIf="connectingMessage">
             <ng-content
-              select="ngx-remote-desktop-connecting-message"
+              select="guacamole-remote-desktop-connecting-message"
             ></ng-content>
           </div>
-          <ngx-remote-desktop-message
+          <guacamole-remote-desktop-message
             *ngIf="!connectingMessage"
             title="Connecting to remote desktop"
             message="Attempting to connect to the remote desktop. Waiting for response..."
             type="success"
           >
-          </ngx-remote-desktop-message>
+          </guacamole-remote-desktop-message>
         </div>
 
         <!-- Disconnected message -->
         <div *ngIf="(state | async) === states.DISCONNECTED">
-          <div class="ngx-remote-desktop-message" *ngIf="disconnectedMessage">
+          <div class="guacamole-remote-desktop-message" *ngIf="disconnectedMessage">
             <ng-content
-              select="ngx-remote-desktop-disconnected-message"
+              select="guacamole-remote-desktop-disconnected-message"
             ></ng-content>
           </div>
-          <ngx-remote-desktop-message
+          <guacamole-remote-desktop-message
             *ngIf="!disconnectedMessage"
             title="Disconnected"
             message="The connection to the remote desktop terminated successfully"
@@ -91,20 +91,20 @@ import {ManagedFilesystemService} from '../managed-filesystem.service';
           >
             <button
               (click)="remoteDesktopService.onReconnect.next(true)"
-              class="ngx-remote-desktop-message-body-btn"
+              class="guacamole-remote-desktop-message-body-btn"
             >
               Reconnect
             </button>
-          </ngx-remote-desktop-message>
+          </guacamole-remote-desktop-message>
         </div>
 
         <!-- Error message -->
         <div *ngIf="(state | async) === states.ERROR">
-          <div class="ngx-remote-desktop-message" *ngIf="errorMessage">
-            <ng-content select="ngx-remote-desktop-error-message"></ng-content>
+          <div class="guacamole-remote-desktop-message" *ngIf="errorMessage">
+            <ng-content select="guacamole-remote-desktop-error-message"></ng-content>
           </div>
 
-          <ngx-remote-desktop-message
+          <guacamole-remote-desktop-message
             *ngIf="!errorMessage"
             title="Connection error"
             message="The remote desktop server is currently unreachable."
@@ -112,24 +112,24 @@ import {ManagedFilesystemService} from '../managed-filesystem.service';
           >
             <button
               (click)="remoteDesktopService.onReconnect.next(true)"
-              class="ngx-remote-desktop-message-body-btn"
+              class="guacamole-remote-desktop-message-body-btn"
             >
               Connect
             </button>
-          </ngx-remote-desktop-message>
+          </guacamole-remote-desktop-message>
         </div>
 
         <!-- Display -->
-        <ngx-remote-desktop-display
+        <guacamole-remote-desktop-display
           *ngIf="(state | async) === states.CONNECTED"
           [manager]="remoteDesktopService"
           (onMouseMove)="handleDisplayMouseMove($event)"
         >
-        </ngx-remote-desktop-display>
+        </guacamole-remote-desktop-display>
 
         <!-- File manager -->
         <div class="file-manager-dialog" [class.show]="showFileManager">
-          <ng-content select="ngx-remote-desktop-file-manager"></ng-content>
+          <ng-content select="guacamole-remote-desktop-file-manager"></ng-content>
         </div>
 
         <!-- File transfers -->
@@ -141,7 +141,7 @@ import {ManagedFilesystemService} from '../managed-filesystem.service';
 
 
       <section
-        [class.ngx-remote-desktop-status-bar-hidden]="remoteDesktopService.isFullScreen()"
+        [class.guacamole-remote-desktop-status-bar-hidden]="remoteDesktopService.isFullScreen()"
       >
 
       </section>

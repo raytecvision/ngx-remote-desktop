@@ -10,7 +10,7 @@ import {finalize, takeWhile} from 'rxjs/operators';
  * included in the template, so it can be used without a VNC connection
  */
 @Component({
-  selector: 'ngx-remote-desktop-file-manager',
+  selector: 'guacamole-remote-desktop-file-manager',
   templateUrl: './file-manager.component.html',
   styleUrls: ['./file-manager.component.scss']
 })

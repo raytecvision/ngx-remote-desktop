@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { WebSocketTunnel } from "@raytecvision/guacamole-common-js";
+import { WebSocketTunnel } from "guacamole-common-ts";
 import * as FileSaver from "file-saver";
 
 import { RemoteDesktopService, TunnelRestApiService } from "remote-desktop";

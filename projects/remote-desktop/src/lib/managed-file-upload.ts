@@ -8,7 +8,7 @@
  *     The object whose properties should be copied within the new
  *     ManagedFileUpload.
  */
-import {Status} from '@raytecvision/guacamole-common-js';
+import {Status} from 'guacamole-common-ts';
 
 export class ManagedFileUpload {
   /**

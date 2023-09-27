@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 
 @Component({
-    selector: 'ngx-remote-desktop-disconnected-message',
-    host: { class: 'ngx-remote-desktop-message'},
+    selector: 'guacamole-remote-desktop-disconnected-message',
+    host: { class: 'guacamole-remote-desktop-message'},
     template: `
         <ng-content></ng-content>
     `
